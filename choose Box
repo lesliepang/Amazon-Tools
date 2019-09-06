@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- conding: utf-8 -*-
+
+'Choose box for product'
+
+__author__ = 'lesliepang'
+
+print('请输入以下参数，\n将得到不超规格的最大放置数量')
+print('重量不超过23.8kg，单边长不超过63.5cm')
+
+wright = 23.8
+lmax = 63.5
+solve = []
+
+d = float(input('请输入产品长度(cm): '))
+k = float(input('请输入产品宽度(cm): '))
+h = float(input('请输入产品高度(cm): '))
+w = float(input('请输入单盒重量(kg): '))
+
+# 计算最高承重的装载量
+wmax = wright/w
+
+# 计算单边最高装载
+dmax = int(lmax/d)
+kmax = int(lmax/k)
+hmax = int(lmax/h)
+
+# 列出组合
+Group = []
+num = []
+D = list(range(1,dmax+1))
+K = list(range(1,kmax+1))
+H = list(range(1,hmax+1))
+for a in D:
+    for b in K:
+        for c in H:
+            num.append((a,b,c))
+            x = a*b*c
+            Group.append(x)
+
+
+# 寻求最优解
+for i in Group:
+    if i <= wmax:
+        solve.append(i)
+    best = max(solve)
+print('箱子最大放置数量', best)
+
+# 箱子可配置数量
+
+# print('箱子可配置数量', ppp)
+for i in num:
+    if i[0]*i[1]*i[2] == best:
+        print('最优化放置组合为：（长度，宽度，高度）', i)
+
+end = input('done')
+end = input('Thank you for your hard work！')
