@@ -47,8 +47,6 @@ for i in Group:
 print('箱子最大放置数量', best)
 
 # 箱子可配置数量
-
-# print('箱子可配置数量', ppp)
 for i in num:
     if i[0]*i[1]*i[2] == best:
         print('最优化放置组合为：（长度，宽度，高度）', i)
