@@ -1,55 +1,172 @@
 #!/usr/bin/env python3
 # -*- conding: utf-8 -*-
 
-'Choose box for product'
-
+    
+'Calculate of AMZ fee and choose Carton for product'
+    
 __author__ = 'lesliepang'
 
-print('请输入以下参数，\n将得到不超规格的最大放置数量')
-print('重量不超过23.8kg，单边长不超过63.5cm')
-
-wright = 23.8
-lmax = 63.5
-solve = []
-
-d = float(input('请输入产品长度(cm): '))
-k = float(input('请输入产品宽度(cm): '))
-h = float(input('请输入产品高度(cm): '))
-w = float(input('请输入单盒重量(kg): '))
-
-# 计算最高承重的装载量
-wmax = wright/w
-
-# 计算单边最高装载
-dmax = int(lmax/d)
-kmax = int(lmax/k)
-hmax = int(lmax/h)
-
-# 列出组合
-Group = []
-num = []
-D = list(range(1,dmax+1))
-K = list(range(1,kmax+1))
-H = list(range(1,hmax+1))
-for a in D:
-    for b in K:
-        for c in H:
-            num.append((a,b,c))
-            x = a*b*c
-            Group.append(x)
-
-
-# 寻求最优解
-for i in Group:
-    if i <= wmax:
-        solve.append(i)
-    best = max(solve)
-print('箱子最大放置数量', best)
-
-# 箱子可配置数量
-for i in num:
-    if i[0]*i[1]*i[2] == best:
-        print('最优化放置组合为：（长度，宽度，高度）', i)
-
-end = input('done')
-end = input('Thank you for your hard work！')
+while True:    
+    print('请输入以下参数，\n将得到不超规格的最大放置数量')
+    print('重量不超过23.8kg，单边长不超过63.5cm')
+    
+    def cm2in(x):
+        return (x/2.54)
+    def kg2ib(x):
+        return (x/0.4535924)
+    def in2cm(x):
+        return (x/0.3937008)
+    def ib2kg(x):
+        return (x/2.2046226)
+    
+    wright = 23.8
+    lmax = 63.5
+    solve = [1]
+    # 选择最长边、次长边、最短边，计算长度+围度
+    abc = []
+    a = float(input('请输入第一条边长（cm）：  '))
+    abc.append(a)
+    b = float(input('请输入第二条边长（cm）：  '))
+    abc.append(b)
+    c = float(input('请输入第三条边长（cm）：  '))
+    abc.append(c)
+    abc.sort(reverse = True)  #降序排列
+    
+    lc = cm2in((float(abc[1]) + float(abc[2]))/2)  #长度+围度
+    A = cm2in(float(abc[0]))  #最长边in)
+    B = cm2in(float(abc[1]))  #次长边in)
+    C = cm2in(float(abc[2]))  #最短边in)
+    
+    w = float(input('请输入单盒重量(kg): '))
+    
+    # 计算最高承重的装载量
+    wmax = wright/w
+    
+    # 计算单边最高装载
+    dmax = int(lmax/a) 
+    kmax = int(lmax/b)
+    hmax = int(lmax/c)
+    
+    # 列出组合
+    Group = []
+    num = []
+    D = list(range(1,dmax+1))
+    K = list(range(1,kmax+1))
+    H = list(range(1,hmax+1))
+    for j in D:
+        for k in K:
+            for l in H:
+                num.append((j,k,l))
+                x = j*k*l
+                Group.append(x)
+    
+    
+    # 寻求最优解
+    for i in Group:
+        if i <= wmax:
+            solve.append(i)
+        best = max(solve)
+    print('箱子最大放置数量', best)
+    
+    # 箱子可配置数量
+    
+    # print('箱子可配置数量', ppp)
+    for i in num:
+        if i[0]*i[1]*i[2] == best:
+            print('最优化放置组合为：（长度，宽度，高度）', i)
+    
+    import math
+    
+    #筛选Amazon尺寸分段
+    pw0 = math.ceil(max(A*B*C/139,w))
+    pw1 = math.ceil(max(A*B*C/139,w) + 0.25)
+    pw2 = math.ceil(max(A*B*C/139,w) + 1)
+    
+    if (w <= 0.75) and (A<=15) and (B<=12) and (C<=0.75):
+        print('这件产品属于Amazon小号标准件')
+        MMM = 1
+        if pw0 <= 0.625:
+            fee = 2.41
+        elif pw0 <= 1:
+            fee = 2.48
+    elif (w <= 20) and (A<=18) and (B<=14) and (C<=8):
+        MMM = 1
+        print('这件产品属于Amazon大号标准件')
+        if pw0 <= 0.625:
+            fee = 3.19
+        elif 0.625 <= pw0 <= 1:
+            fee = 3.28
+        elif 1 <= pw1 <= 2:
+            fee = 4.76
+        elif 2 <= pw1 <= 3:
+            fee = 5.26
+            if (pw1-3) >= 0:    
+                fee += (pw1-3)*0.38
+            else:
+                fee = 5.26
+        elif pw1 > 3:
+            fee = 5.26
+            fee += (pw1-3)*0.38
+    elif (w <= 70) and (A<=60) and (B<=30) and (lc<=130):
+        MMM = 2
+        print('这件产品属于小号大件')
+        if pw2 <= 70:
+            fee = 8.26
+            fee += (pw2-2)*0.38
+    elif (w <= 150) and (A<=108) and (B<=30) and (lc<=130):
+        MMM = 2
+        print('这件产品属于中号大件')
+        if pw2 <= 151:
+            fee = 9.79
+            fee += (pw2-2)*0.39
+    elif (w <= 150) and (A<=108) and (lc<=165):
+        MMM = 2
+        print('这件产品属于大号大件')
+        if pw2 <= 151:
+            fee = 75.78
+            if (pw2-90) >= 0:
+                fee += (pw2-90)*0.79
+            else:
+                fee = 75.78
+    elif (w >= 150) or (A >= 108) or (lc >= 165):
+        MMM = 2
+        print('这件产品属于特殊大件')
+        fee = 137.32
+        www = w + 1  #发货Ib
+        bw = math.ceil(www)
+        fee += (bw-90)*0.91
+        
+    #筛选仓储费
+    #ft³ =in³ * 0.00057870
+    def in32ft3(x):
+        return x*0.00057870
+    ms1 = 0.69
+    ml1 = 0.48
+    ms10 = 2.4
+    ml10 = 1.2
+    M = int(input('请输入月份： '))
+    if M<=9:
+        if MMM == 1:
+            mmm = ms1
+        elif MMM == 2:
+            mmm = ml1
+    elif 9<M<=12:
+        if MMM == 1:
+            mmm = ms10
+        elif MMM == 2:
+            mmm = ml10   
+    fee += in32ft3(A*B*C)*mmm  #计入月度仓储费
+    
+    print('FBA fee', fee)
+    
+    # 计算头程物流
+    # 空运 22/kg ； 海运 8/kg
+    
+    tt = 22*max(a*b*c/6000, w)
+    th = 8*max(a*b*c/6000, w)
+    
+    print('空运头程:', tt, '海运头程:', th)
+    
+    
+    end = input('done')
+    end = input('Thank you for your hard work！')
