@@ -1,3 +1,8 @@
+# Excel VBA ADO 读写基本框架
+
+`-*- coding = utf-8 -*-
+
+```VBA
 Sub write()
 
     Set uADO = CreateObject("adodb.connection")
@@ -26,3 +31,4 @@ Sub write()
     Set reADO = Nothing
 
 End Sub
+```
