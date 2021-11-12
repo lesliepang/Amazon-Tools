@@ -2,6 +2,7 @@ VBA
 
 '-*- coding=utf-8 -*-
 
+
 Sub write()
 
 Set uADO = CreateObject("adodb.connection")
